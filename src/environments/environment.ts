@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  PATH_BASE_URL: 'http://163.172.157.158/backend'
+  PATH_BASE_URL: 'http://163.172.157.158/back'
 };
 
 /*
