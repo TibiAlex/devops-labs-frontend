@@ -40,6 +40,8 @@ jobs:
       shell: bash
 
     - name: Loop through IP addresses and create tasks
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.DEMO }}
       run: |
         ips=()
         while read -r ip; do
@@ -47,9 +49,10 @@ jobs:
           ips+=("$ip")
         done < ips.txt
         echo "The array of ips $ips"
-        echo "${{ secrets.DEMO }}" > demo.pem
+        mkdir -p ~/.ssh
+        echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
         for ip in "${ips[@]}"; do
           ip=$(echo "$ip" | sed 's/"//g')
           echo "${{ secrets.AWS_HOST }}@$ip"
-          scp -r -i demo.pem dist/devops-labs-frontend/ ${{ secrets.AWS_HOST }}@$ip:/frontend/
+          scp -i ~/.ssh/id_rsa -r dist/devops-labs-frontend/ ${{ secrets.AWS_HOST }}@$ip:/frontend/
         done
