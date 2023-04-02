@@ -41,17 +41,22 @@ jobs:
 
     - name: Loop through IP addresses and create tasks
       run: |
+        ips=()
         while read -r ip; do
           ip=$(echo "$ip" | tr -d '\n')
-          echo "$ip"
-          uses: appleboy/scp-action@master
-          with:
-            rm: true
-            host: $ip
-            username: ${{ secrets.AWS_HOST }}
-            key: ${{ secrets.DEMO }}
-            port: 22
-            strip_components: 2
-            source: "dist/devops-labs-frontend/*"
-            target: "/frontend/"
+          ips+=("$ip")
         done < ips.txt
+        echo "::set-output name=ips::${ips[*]}"
+
+    - name: Set up SSH
+      uses: webfactory/ssh-agent@v0.5.0
+      with:
+        ssh-private-key: ${{ secrets.DEMO }}
+
+    - name: Loop over SCP action
+      run: |
+        ips=(${{ steps.get-ips.outputs.ips }})
+        for ip in "${ips[@]}"; do
+          remote_host="$ip@${{ secrets.AWS_HOST }}"
+          docker run -e "LOCAL_FILE=dist/devops-labs-frontend/*" -e "REMOTE_FILE=/frontend/" -e "REMOTE_HOST=$remote_host" appleboy/scp-action@master
+        done
