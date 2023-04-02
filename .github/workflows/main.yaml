@@ -33,6 +33,7 @@ jobs:
     - name: Execute script and store output
       id: get-ips
       run: |
+        chmod +x ./script.sh
         ips=$(./script.sh)
         echo "$ips" > ips.txt
         cat ips.txt
