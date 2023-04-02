@@ -47,8 +47,8 @@ jobs:
           ips+=("$ip")
         done < ips.txt
         echo "The array of ips $ips"
+        echo "${{ secrets.DEMO }}" > demo.pem
         for ip in "${ips[@]}"; do
-          scp -r dist/devops-labs-frontend/ ${{ secrets.AWS_HOST }}@$ip:/frontend/
+          echo "${{ secrets.AWS_HOST }}@$ip"
+          scp -r -i demo.pem dist/devops-labs-frontend/ ${{ secrets.AWS_HOST }}@$ip:/frontend/
         done
-      env:
-        SSH_PRIVATE_KEY: ${{ secrets.DEMO }}
