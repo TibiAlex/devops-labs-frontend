@@ -41,8 +41,9 @@ jobs:
 
     - name: Loop through IP addresses and create tasks
       run: |
-        IPS=($(echo "${{ steps.get-ips.outputs.ips }}" | tr '\n' ' '))
-        for ip in "${IPS[@]}"; do
+        while read -r ip; do
+          ip=$(echo "$ip" | tr -d '\n')
+          echo "$ip"
           uses: appleboy/scp-action@master
           with:
             rm: true
@@ -53,4 +54,4 @@ jobs:
             strip_components: 2
             source: "dist/devops-labs-frontend/*"
             target: "/frontend/"
-        done
+        done < ips.txt
