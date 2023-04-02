@@ -39,6 +39,11 @@ jobs:
         cat ips.txt
       shell: bash
 
+    - name: Set up SSH
+      uses: webfactory/ssh-agent@v0.5.0
+      with:
+        ssh-private-key: ${{ secrets.DEMO }}
+
     - name: Loop through IP addresses and create tasks
       run: |
         ips=()
@@ -46,16 +51,7 @@ jobs:
           ip=$(echo "$ip" | tr -d '\n')
           ips+=("$ip")
         done < ips.txt
-        echo "::set-output name=ips::${ips[*]}"
-
-    - name: Set up SSH
-      uses: webfactory/ssh-agent@v0.5.0
-      with:
-        ssh-private-key: ${{ secrets.DEMO }}
-
-    - name: Loop over SCP action
-      run: |
-        ips=(${{ steps.get-ips.outputs.ips }})
+        echo "The array of ips $ips"
         for ip in "${ips[@]}"; do
           remote_host="$ip@${{ secrets.AWS_HOST }}"
           echo "$remote_host"
