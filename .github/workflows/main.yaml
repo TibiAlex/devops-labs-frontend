@@ -50,9 +50,10 @@ jobs:
         mkdir -p ~/.ssh
         eval "$(ssh-agent -s)"
         ssh-add <(echo "${{ secrets.DEMO }}")
-        ssh-add -l
+        echo "${{ secrets.DEMO }}" > ~/.ssh/private_key.pem
+        chmod 400 ~/.ssh/private_key.pem
         for ip in "${ips[@]}"; do
           ip=$(echo "$ip" | sed 's/"//g')
           echo "${{ secrets.AWS_HOST }}@$ip"
-          scp -i ~/.ssh/id_rsa -r dist/devops-labs-frontend/ ${{ secrets.AWS_HOST }}@$ip:/frontend/
+          scp -i ~/.ssh/private_key.pem -r dist/devops-labs-frontend/ ${{ secrets.AWS_HOST }}@$ip:/frontend/
         done
