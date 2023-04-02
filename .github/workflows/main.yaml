@@ -58,5 +58,6 @@ jobs:
         ips=(${{ steps.get-ips.outputs.ips }})
         for ip in "${ips[@]}"; do
           remote_host="$ip@${{ secrets.AWS_HOST }}"
+          echo "$remote_host"
           docker run -e "LOCAL_FILE=dist/devops-labs-frontend/*" -e "REMOTE_FILE=/frontend/" -e "REMOTE_HOST=$remote_host" appleboy/scp-action@master
         done
