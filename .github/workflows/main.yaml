@@ -48,6 +48,7 @@ jobs:
         done < ips.txt
         echo "The array of ips $ips"
         mkdir -p ~/.ssh
+        eval "$(ssh-agent -s)"
         ssh-add <(echo "${{ secrets.DEMO }}")
         ssh-add -l
         for ip in "${ips[@]}"; do
