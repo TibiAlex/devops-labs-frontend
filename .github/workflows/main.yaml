@@ -39,11 +39,6 @@ jobs:
         cat ips.txt
       shell: bash
 
-    - name: Set up SSH
-      uses: webfactory/ssh-agent@v0.5.0
-      with:
-        ssh-private-key: ${{ secrets.DEMO }}
-
     - name: Loop through IP addresses and create tasks
       run: |
         ips=()
@@ -53,7 +48,7 @@ jobs:
         done < ips.txt
         echo "The array of ips $ips"
         for ip in "${ips[@]}"; do
-          remote_host="$ip@${{ secrets.AWS_HOST }}"
-          echo "$remote_host"
-          docker run -e "LOCAL_FILE=dist/devops-labs-frontend/*" -e "REMOTE_FILE=/frontend/" -e "REMOTE_HOST=$remote_host" appleboy/scp-action@master
+          scp -r dist/devops-labs-frontend/ ${{ secrets.AWS_HOST }}@$ip:/frontend/
         done
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.DEMO }}
