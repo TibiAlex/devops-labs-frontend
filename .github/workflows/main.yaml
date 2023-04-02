@@ -28,17 +28,20 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-west-2
+        aws-region: us-east-1
 
     - name: Execute script and store output
       id: get-ips
       run: |
         ips=$(./script.sh)
-        echo "::set-output name=ips::$ips"
+        echo "$ips" > ips.txt
+        cat ips.txt
+      shell: bash
 
     - name: Loop through IP addresses and create tasks
       run: |
-        for ip in "${{ steps.get-ips.outputs.ips | split('\n') }}"; do
+        IPS=($(echo "${{ steps.get-ips.outputs.ips }}" | tr '\n' ' '))
+        for ip in "${IPS[@]}"; do
           uses: appleboy/scp-action@master
           with:
             rm: true
