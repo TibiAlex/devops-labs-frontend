@@ -46,11 +46,10 @@ jobs:
           ip=$(echo "$ip" | tr -d '\n')
           ips+=("$ip")
         done < ips.txt
-        echo "The array of ips $ips"
         echo "${{ secrets.DEMO }}" > demo
         chmod 600 demo
         for ip in "${ips[@]}"; do
           ip=$(echo "$ip" | sed 's/"//g')
-          echo "${{ secrets.AWS_HOST }}@$ip"
+          ssh -i demo -o StrictHostKeyChecking=no ${{ secrets.AWS_HOST }}@$ip "rm -f /frontend/index.html"
           scp -i demo -o StrictHostKeyChecking=no -r dist/devops-labs-frontend/* ${{ secrets.AWS_HOST }}@$ip:/frontend/
         done
