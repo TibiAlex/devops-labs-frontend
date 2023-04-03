@@ -47,14 +47,22 @@ jobs:
           ips+=("$ip")
         done < ips.txt
         echo "The array of ips $ips"
+
         mkdir -p ~/.ssh
-        eval "$(ssh-agent -s)"
-        ssh-add <(echo "${{ secrets.DEMO }}")
         echo "${{ secrets.DEMO }}" > ~/.ssh/private_key.pem
         chmod 400 ~/.ssh/private_key.pem
-        ssh-keyscan ${{ secrets.AWS_HOST }} >> ~/.ssh/known_hosts
+
         for ip in "${ips[@]}"; do
           ip=$(echo "$ip" | sed 's/"//g')
           echo "${{ secrets.AWS_HOST }}@$ip"
+
+          cat >>~/.ssh/config <<END
+          Host staging
+            HostName $ip
+            User ${{ secrets.AWS_HOST }}
+            IdentityFile ~/.ssh/private_key.pem
+            StrictHostKeyChecking no
+          END
+
           scp -i ~/.ssh/private_key.pem -r dist/devops-labs-frontend/ ${{ secrets.AWS_HOST }}@$ip:/frontend/
         done
