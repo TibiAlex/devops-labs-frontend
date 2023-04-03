@@ -48,7 +48,7 @@ jobs:
         done < ips.txt
         echo "The array of ips $ips"
         echo "${{ secrets.DEMO }}" > demo
-        ls
+        chmod 600 demo
         for ip in "${ips[@]}"; do
           ip=$(echo "$ip" | sed 's/"//g')
           echo "${{ secrets.AWS_HOST }}@$ip"
