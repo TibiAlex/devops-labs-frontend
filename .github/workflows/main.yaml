@@ -52,5 +52,5 @@ jobs:
         for ip in "${ips[@]}"; do
           ip=$(echo "$ip" | sed 's/"//g')
           echo "${{ secrets.AWS_HOST }}@$ip"
-          scp -i demo -o StrictHostKeyChecking=no -r dist/devops-labs-frontend/ ${{ secrets.AWS_HOST }}@$ip:/frontend/
+          scp -i demo -o StrictHostKeyChecking=no -r dist/devops-labs-frontend/* ${{ secrets.AWS_HOST }}@$ip:/frontend/
         done
