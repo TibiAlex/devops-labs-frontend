@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  PATH_BASE_URL: 'http://163.172.157.158/api'
+  PATH_BASE_URL: 'load-balancer-950787169.us-east-1.elb.amazonaws.com:4000/api'
 };
 
 /*
