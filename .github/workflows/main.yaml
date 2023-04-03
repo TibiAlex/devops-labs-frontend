@@ -47,15 +47,12 @@ jobs:
           ips+=("$ip")
         done < ips.txt
         echo "The array of ips $ips"
-
         mkdir -p ~/.ssh
         echo "${{ secrets.DEMO }}" > ~/.ssh/private_key.pem
         chmod 400 ~/.ssh/private_key.pem
-
         for ip in "${ips[@]}"; do
           ip=$(echo "$ip" | sed 's/"//g')
           echo "${{ secrets.AWS_HOST }}@$ip"
-
           cat >>~/.ssh/config <<END
           Host staging
             HostName $ip
@@ -63,6 +60,5 @@ jobs:
             IdentityFile ~/.ssh/private_key.pem
             StrictHostKeyChecking no
           END
-
           scp -i ~/.ssh/private_key.pem -r dist/devops-labs-frontend/ ${{ secrets.AWS_HOST }}@$ip:/frontend/
         done
